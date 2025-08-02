@@ -24,9 +24,12 @@ void promptStranger() {
   showString(112, 54, "No. of Players", 24, BLACK);
   showString(112, 120, "Input:", 24, BLACK);
   finish();
-  strangers = getStranger();
-  if (strangers > 2) strangers = 0;
-  delay(1500);
+  
+  
+}
+
+void setStrangers(char s) {
+  strangers = s;
   EPD_FastInit();
   showChar(208, 120, strangers + '2', 24, BLACK);
   finish();
@@ -148,4 +151,32 @@ void goDown() {
   else cursor[1]++;
   setCur(true);
   finish();
+}
+
+
+void promptScore() {
+  EPD_FastInit();  // Fast initialize the screen
+  drawCurvedRect(100, 40, 316, 200, 20);
+  showString(112, 54, "Input the score", 24, BLACK);
+  showString(112, 120, "Score:", 24, BLACK);
+  finish();
+}
+void setScore(char s) {
+  uint8_t score = (uint8_t) s;
+  uint8_t i = cursor[0];
+  uint8_t j = cursor[1];
+  switch(state) {
+  case 1:
+    to9[j][i] = score;
+    break;
+  case 2:
+    o18[j][i] = score;
+    break;
+  default:
+    break;
+  }
+  EPD_FastInit();
+  showChar(208, 120, s + '0', 24, BLACK);
+  finish();
+  return;
 }

@@ -13,6 +13,8 @@ const int16_t WHT = 1;
 const int16_t SHARP_H = 168;
 const int16_t SHARP_W = 144;
 
+uint8_t curNum = 0;
+
 Adafruit_SharpMem display(SHARP_SCK, SHARP_MOSI, SHARP_SS, 144, 168);
 // The currently-available SHARP Memory Display (144x168 pixels)
 // requires > 4K of microcontroller RAM; it WILL NOT WORK on Arduino Uno
@@ -72,6 +74,8 @@ void drawPic(int16_t x, int16_t y, const uint8_t *bitmap, int16_t w, int16_t h) 
 }
 
 void drawNUM(uint8_t n, int16_t x, int16_t y) {
+  if (n == 0 || n == curNum) return;
+  curNum = n;
   switch (n) {
   case 0:
     drawPic(x,y, ZERO, 40, 93);
@@ -103,6 +107,18 @@ void drawNUM(uint8_t n, int16_t x, int16_t y) {
   case 9:
     drawPic(x,y, NINE, 40, 93);
     break;
+  case -4:
+    drawPic(x,y, OKAY, 92, 92);
+    break;
+  case -3:
+    drawPic(x,y, NONE, 92, 92);
+    break;
+  case -2:
+    drawPic(x,y, UPUP, 92, 92);
+    break;
+  case -1:
+    drawPic(x,y, DOWN, 92, 92);
+    break;
   default:
     break;
   }
@@ -124,13 +140,15 @@ void NUM(uint8_t num) {
     uint8_t num2 = num % 10;
     drawNUM(num1, 36, 76);
     drawNUM(num2, 73, 76);
-  } else {
+  } else if (num >= 0) {
     drawNUM(num, 54,76);
+  } else {
+    drawNUM(num, 26, 76);
   }
   display.refresh();
 }
 
-void INFO(char* str) {
+void INFO(const char* str) {
   INF_Refresh();
   display.setTextSize(4);
   display.setTextColor(BLK);

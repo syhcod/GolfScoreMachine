@@ -1,11 +1,16 @@
 #include "input.h"
 #include "BMK52T016.h"
 #include <Arduino.h>
+#include "SHARP.h"
 
 
 TwoWire newWire(0);
+
 BMK52T016*     BMK52 = nullptr;
 volatile char t_key = 0;
+volatile char state = -100;
+
+volatile uint8_t max_num = 2;
 
 char getKey() {
   if (BMK52->getINT() != 0) return (char)0;
@@ -15,16 +20,16 @@ char getKey() {
   if (st < 9) return (char)st;
   switch (st) {
     case 2048:
-      return -1;
+      return DN;
       break;
     case 1024:
-      return -2;
+      return UP;
       break;
     case 512:
-      return -3;
+      return NO;
       break;
     case 256:
-      return -4;
+      return OK;
       break;
     default:
       return 0;
@@ -34,16 +39,27 @@ char getKey() {
 }
 
 void onkeyP() {
-  t_key = getKey();
+  char c = getKey();
+  if (state == IDLE) state = 0;
+  if (t_key == IDLE) {
+    t_key = c;
+    return;
+  }
+  state += c - t_key;
+  t_key = c;
+  if (state < 0) state = 0;
+  if (state > max_num) state = max_num;
+  NUM(state);
   delay(50);
 }
 
 char whatKey() {
-  return t_key;
+  return state;
 }
 
 void setkey(char p) {
-  t_key = p;
+  t_key = IDLE;
+  state = p;
 }
 
 void initT() {
@@ -55,6 +71,7 @@ void initT() {
   attachInterrupt(digitalPinToInterrupt(14), onkeyP, FALLING);
 }
 
-unsigned char getStranger() {
-  return 0;
+void setState(uint8_t max, const char* message) {
+  max_num = max;
+  INFO(message);
 }

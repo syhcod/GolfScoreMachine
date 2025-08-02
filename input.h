@@ -1,9 +1,14 @@
-// Should only return values 0, 1, or 2.
+#define OK -4
+#define NO -3
+#define UP -2
+#define DN -1
 
-unsigned char getStranger();
+#define IDLE -100
 
 void initT();
 
 char whatKey();
 
 void setKey(char);
+
+void setState(unsigned char max, const char* message);

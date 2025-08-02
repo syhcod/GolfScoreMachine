@@ -10,6 +10,9 @@ void showScore();
 void goToRow(uint8_t);
 void goUp();
 void goDown();
+void setStrangers(char s);
+void promptScore();
+void setScore(char s);
 
 // 'mom', 111x40px
 const unsigned char epd_bitmap_mom [] PROGMEM = {
